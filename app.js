@@ -1338,6 +1338,112 @@ function login() {
 
   setReadonlyMode();
   renderAll();
+
+
+const liveNames = [
+  "Emirhan Kaya", "Mert Demir", "Caner Yıldız", "Burak Aydın", "Kerem Şahin",
+  "Onur Koç", "Eren Arslan", "Yusuf Çelik", "Furkan Özdemir", "Kaan Aksoy",
+  "Alperen Doğan", "Tolga Yalçın", "Baran Kurt", "Serkan Polat", "Umut Eren",
+  "Oğuzhan Tekin", "Arda Kaplan", "Bora Keskin", "Yiğit Kara", "Berkay Aslan",
+  "Hakan Yılmaz", "Samet Öztürk", "Batuhan Acar", "Anıl Korkmaz", "Doruk Can",
+  "Murat Efe", "Cem Arıkan", "Tuna Başar", "Egehan Sezer", "Kadir Bulut"
+];
+
+let liveUserIdCounter = 90000;
+
+function randomItem(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function randomLiveAmount() {
+  const r = Math.random();
+  let amount;
+
+  if (r < 0.60) {
+    amount = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000;
+  } else if (r < 0.85) {
+    amount = Math.floor(Math.random() * (25000 - 5000 + 1)) + 5000;
+  } else {
+    amount = Math.floor(Math.random() * (120000 - 25000 + 1)) + 25000;
+  }
+
+  // Yaklaşık %30 işlem kuruşlu olsun
+  if (Math.random() < 0.30) {
+    const cents = randomItem([15, 20, 35, 40, 45, 50, 65, 70, 75, 80, 90, 95, 99]);
+    amount = Number(`${amount}.${cents}`);
+  }
+
+  return amount;
+}
+
+function randomLiveStatus() {
+  const r = Math.random();
+
+  if (r < 0.80) {
+    return "Onaylandı";
+  }
+
+  if (r < 0.95) {
+    return "Reddedildi";
+  }
+
+  return "Bekliyor";
+}
+
+function nowDateText() {
+  const now = new Date();
+
+  const date = now.toLocaleDateString("tr-TR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+
+  const time = now.toLocaleTimeString("tr-TR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  return `${date} ${time}`;
+}
+
+function createLiveTransaction() {
+  const type = Math.random() < 0.58 ? "investment" : "withdrawal";
+
+  const newItem = {
+    userId: `AGX-${liveUserIdCounter++}`,
+    name: randomItem(liveNames),
+    amount: randomLiveAmount(),
+    date: nowDateText(),
+    status: randomLiveStatus()
+  };
+
+  if (type === "investment") {
+    investments.unshift(newItem);
+  } else {
+    withdrawals.unshift(newItem);
+  }
+
+  renderAll();
+}
+
+function scheduleNextLiveTransaction() {
+  // 15 saniye ile 75 saniye arasında rastgele yeni işlem düşürür
+  const delay = Math.floor(Math.random() * (75000 - 15000 + 1)) + 15000;
+
+  setTimeout(() => {
+    const appVisible = !document.getElementById("app").classList.contains("hidden");
+
+    if (appVisible) {
+      createLiveTransaction();
+    }
+
+    scheduleNextLiveTransaction();
+  }, delay);
+}
+
+scheduleNextLiveTransaction();
+
 }
 
 function logout() {
@@ -1456,7 +1562,8 @@ function renderDashboard() {
   document.getElementById("totalInvestment").textContent = formatMoney(totalInvestment);
   document.getElementById("totalWithdrawal").textContent = formatMoney(totalWithdrawal);
   document.getElementById("netBalance").textContent = formatMoney(totalInvestment - totalWithdrawal);
-  document.getElementById("staffCount").textContent = staff.length;
+  const uniqueStaffCount = new Set(staff.map(item => item.name)).size;
+  document.getElementById("staffCount").textContent = uniqueStaffCount;
 
   const recent = [
     ...investments.map(item => ({ type: "Yatırım", ...item })),
