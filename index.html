@@ -17,6 +17,7 @@
       <input id="username" type="text" placeholder="Kullanıcı adı" />
       <input id="password" type="password" placeholder="Şifre" />
 
+      <div id="loginError" class="login-error hidden">Bilgileriniz yanlış. Lütfen tekrar deneyin.</div>
       <button onclick="login()">Giriş Yap</button>
       <small>Demo proje: Bilgiler kontrol edilmeden panele giriş yapılır.</small>
     </div>
@@ -42,14 +43,17 @@
       <button class="logout" onclick="logout()">Çıkış Yap</button>
     </aside>
 
+    <div class="mobile-overlay" onclick="closeMobileMenu()"></div>
+
     <main class="main">
       <header class="topbar">
+        <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
         <div>
           <h1>Agentix Finans Paneli</h1>
           <p>Yatırım, çekim ve personel takip sistemi</p>
         </div>
         <div class="user-box">
-          <span>Admin</span>
+          <span id="panelUserRole">İzleme Hesabı</span>
           <strong>Çevrimiçi</strong>
         </div>
       </header>
@@ -80,8 +84,10 @@
             <thead>
               <tr>
                 <th>İşlem</th>
+                <th>Kullanıcı ID</th>
                 <th>Kişi</th>
                 <th>Tutar</th>
+                <th>Tarih / Saat</th>
                 <th>Durum</th>
               </tr>
             </thead>
@@ -96,7 +102,19 @@
           <p>Müşteri yatırım kayıtlarını buradan takip edebilirsin.</p>
         </div>
 
-        <div class="form">
+        <div class="filter-bar">
+          <label>Gün seç:</label>
+          <select id="investmentDayFilter" onchange="renderInvestments()">
+            <option value="all">Tüm Günler</option>
+            <option value="10.06.2026">10.06.2026</option>
+            <option value="09.06.2026">09.06.2026</option>
+            <option value="08.06.2026">08.06.2026</option>
+            <option value="07.06.2026">07.06.2026</option>
+            <option value="06.06.2026">06.06.2026</option>
+          </select>
+        </div>
+
+        <div class="form admin-only">
           <input id="invName" placeholder="Müşteri adı" />
           <input id="invAmount" type="number" placeholder="Tutar" />
           <select id="invStatus">
@@ -111,9 +129,10 @@
           <table>
             <thead>
               <tr>
+                <th>Kullanıcı ID</th>
                 <th>Ad Soyad</th>
                 <th>Tutar</th>
-                <th>Tarih</th>
+                <th>Tarih / Saat</th>
                 <th>Durum</th>
               </tr>
             </thead>
@@ -128,7 +147,19 @@
           <p>Para çekim taleplerini listele ve durumlarını görüntüle.</p>
         </div>
 
-        <div class="form">
+        <div class="filter-bar">
+          <label>Gün seç:</label>
+          <select id="withdrawalDayFilter" onchange="renderWithdrawals()">
+            <option value="all">Tüm Günler</option>
+            <option value="10.06.2026">10.06.2026</option>
+            <option value="09.06.2026">09.06.2026</option>
+            <option value="08.06.2026">08.06.2026</option>
+            <option value="07.06.2026">07.06.2026</option>
+            <option value="06.06.2026">06.06.2026</option>
+          </select>
+        </div>
+
+        <div class="form admin-only">
           <input id="wdName" placeholder="Müşteri adı" />
           <input id="wdAmount" type="number" placeholder="Tutar" />
           <select id="wdStatus">
@@ -143,9 +174,10 @@
           <table>
             <thead>
               <tr>
+                <th>Kullanıcı ID</th>
                 <th>Ad Soyad</th>
                 <th>Tutar</th>
-                <th>Tarih</th>
+                <th>Tarih / Saat</th>
                 <th>Durum</th>
               </tr>
             </thead>
@@ -160,7 +192,7 @@
           <p>Personel bilgileri, görevleri ve maaş takibi.</p>
         </div>
 
-        <div class="form">
+        <div class="form admin-only">
           <input id="staffName" placeholder="Personel adı" />
           <input id="staffRole" placeholder="Görev" />
           <input id="staffSalary" type="number" placeholder="Maaş" />
