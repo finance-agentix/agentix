@@ -1495,7 +1495,6 @@ function scheduleNextLiveTransaction() {
 
 scheduleNextLiveTransaction();
 
-}
 
 function logout() {
   localStorage.removeItem("agentixLoggedIn");
