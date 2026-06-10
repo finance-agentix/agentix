@@ -19,7 +19,6 @@
 
       <div id="loginError" class="login-error hidden">Bilgileriniz yanlış. Lütfen tekrar deneyin.</div>
       <button onclick="login()">Giriş Yap</button>
-      <small>Demo proje: Bilgiler kontrol edilmeden panele giriş yapılır.</small>
     </div>
   </div>
 
@@ -52,9 +51,12 @@
           <h1>Agentix Finans Paneli</h1>
           <p>Yatırım, çekim ve personel takip sistemi</p>
         </div>
-        <div class="user-box">
-          <span id="panelUserRole">İzleme Hesabı</span>
-          <strong>Çevrimiçi</strong>
+        <div class="top-actions">
+          <button id="adminLiveButton" class="-live-btn hidden" onclick="createLiveTransaction()">Rastgele İşlem Düşür</button>
+          <div class="user-box">
+            <span id="panelUserRole">İzleme Hesabı</span>
+            <strong>Çevrimiçi</strong>
+          </div>
         </div>
       </header>
 

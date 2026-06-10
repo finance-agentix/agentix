@@ -462,3 +462,31 @@ th {
     min-width: 760px;
   }
 }
+
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.-live-btn {
+  background: #16a34a;
+  white-space: nowrap;
+}
+
+.-live-btn:hover {
+  background: #15803d;
+}
+
+@media (max-width: 900px) {
+  .top-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .-live-btn {
+    padding: 11px 12px;
+    font-size: 13px;
+  }
+}

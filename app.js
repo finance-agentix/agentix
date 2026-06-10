@@ -1,3 +1,4 @@
+let currentUserRole = "viewer";
 let investments = [
   { userId: "AGX-12000", name: "Bora Ekinci", amount: 94000, date: "10.06.2026 23:31", status: "Onaylandı" },
   { userId: "AGX-12688", name: "Cemil Kılıç", amount: 4450, date: "10.06.2026 23:21", status: "Onaylandı" },
@@ -1351,82 +1352,35 @@ function login() {
   const password = document.getElementById("password").value.trim();
   const loginError = document.getElementById("loginError");
 
-  if (username !== "bozo" || password !== "bozo013455") {
+  let role = null;
+
+  if (username === "bozo" && password === "bozo013455") {
+    role = "viewer";
+  }
+
+  if (username === "sefer" && password === "sefer345501") {
+    role = "admin";
+  }
+
+  if (!role) {
     loginError.classList.remove("hidden");
     return;
   }
 
+  currentUserRole = role;
   loginError.classList.add("hidden");
   localStorage.setItem("agentixLoggedIn", "true");
+  localStorage.setItem("agentixRole", role);
 
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
 
-  setReadonlyMode();
-  renderAll();
-
-
-const liveNames = [
-  "Emirhan Kaya", "Mert Demir", "Caner Yıldız", "Burak Aydın", "Kerem Şahin",
-  "Onur Koç", "Eren Arslan", "Yusuf Çelik", "Furkan Özdemir", "Kaan Aksoy",
-  "Alperen Doğan", "Tolga Yalçın", "Baran Kurt", "Serkan Polat", "Umut Eren",
-  "Oğuzhan Tekin", "Arda Kaplan", "Bora Keskin", "Yiğit Kara", "Berkay Aslan",
-  "Hakan Yılmaz", "Samet Öztürk", "Batuhan Acar", "Anıl Korkmaz", "Doruk Can",
-  "Murat Efe", "Cem Arıkan", "Tuna Başar", "Egehan Sezer", "Kadir Bulut"
-];
-
-let liveUserIdCounter = 90000;
-
-const liveStaffNames = ["Burak", "Seda", "Elif", "Ayaz", "Cem", "Mert", "Deniz", "Ece", "Kaan", "Arda"];
-
-function createStaffLogForTransaction(type, status) {
-  const staffName = randomItem(liveStaffNames);
-
-  let action;
-
-  if (type === "investment") {
-    if (status === "Onaylandı") {
-      action = randomItem([
-        "Manuel yatırım ekledi",
-        "Yatırım kaydını doğruladı",
-        "Yatırım dekontunu kontrol etti"
-      ]);
-    } else if (status === "Reddedildi") {
-      action = randomItem([
-        "Yatırım işlemini reddetti",
-        "Hatalı yatırım kaydını kontrol etti"
-      ]);
-    } else {
-      action = randomItem([
-        "Bekleyen yatırımı incelemeye aldı",
-        "Yatırım kaydını kontrol ediyor"
-      ]);
-    }
-  } else {
-    if (status === "Onaylandı") {
-      action = randomItem([
-        "Çekim işlemini onayladı",
-        "Çekim talebini tamamladı",
-        "IBAN durumunu değiştirdi"
-      ]);
-    } else if (status === "Reddedildi") {
-      action = randomItem([
-        "Çekim işlemini reddetti",
-        "IBAN uyuşmazlığı nedeniyle çekimi reddetti"
-      ]);
-    } else {
-      action = randomItem([
-        "Bekleyen çekimi incelemeye aldı",
-        "Çekim talebini kontrol ediyor"
-      ]);
-    }
+  loadRuntimeData();
+  applyRoleMode();
+  if (typeof startRemoteSync === "function") {
+    startRemoteSync();
   }
-
-  staff.unshift({
-    name: staffName,
-    action,
-    date: nowDateText()
-  });
+  renderAll();
 }
 
 
@@ -1534,19 +1488,48 @@ scheduleNextLiveTransaction();
 
 function logout() {
   localStorage.removeItem("agentixLoggedIn");
+  localStorage.removeItem("agentixRole");
+  currentUserRole = "viewer";
   document.getElementById("app").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
 }
 
-function setReadonlyMode() {
+function applyRoleMode() {
+  const roleText = document.getElementById("panelUserRole");
+  const adminButton = document.getElementById("adminLiveButton");
+
+  if (currentUserRole === "admin") {
+    document.querySelectorAll(".admin-only").forEach(area => {
+      area.classList.remove("hidden");
+    });
+
+    if (roleText) {
+      roleText.textContent = "Admin Paneli";
+    }
+
+    if (adminButton) {
+      adminButton.classList.remove("hidden");
+    }
+
+    return;
+  }
+
   document.querySelectorAll(".admin-only").forEach(area => {
     area.classList.add("hidden");
   });
 
-  const role = document.getElementById("panelUserRole");
-  if (role) {
-    role.textContent = "İzleme Hesabı";
+  if (roleText) {
+    roleText.textContent = "İzleme Hesabı";
   }
+
+  if (adminButton) {
+    adminButton.classList.add("hidden");
+  }
+}
+
+function setReadonlyMode() {
+  currentUserRole = "viewer";
+  applyRoleMode();
 }
 
 function showPage(pageId, button) {
@@ -1703,10 +1686,14 @@ function checkSavedSession() {
   const isLoggedIn = localStorage.getItem("agentixLoggedIn") === "true";
 
   if (isLoggedIn) {
+    currentUserRole = localStorage.getItem("agentixRole") || "viewer";
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
     loadRuntimeData();
-    setReadonlyMode();
+    applyRoleMode();
+    if (typeof startRemoteSync === "function") {
+      startRemoteSync();
+    }
     renderAll();
   }
 }
