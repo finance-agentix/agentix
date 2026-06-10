@@ -1,3 +1,14 @@
+const AGENTIX_APP_VERSION = "2026-06-11-login-fix-2";
+
+if (localStorage.getItem("agentixAppVersion") !== AGENTIX_APP_VERSION) {
+  localStorage.removeItem("agentixLoggedIn");
+  localStorage.removeItem("agentixRole");
+  localStorage.removeItem("agentixInvestments");
+  localStorage.removeItem("agentixWithdrawals");
+  localStorage.removeItem("agentixStaff");
+  localStorage.setItem("agentixAppVersion", AGENTIX_APP_VERSION);
+}
+
 let currentUserRole = "viewer";
 let investments = [
   { userId: "AGX-12000", name: "Bora Ekinci", amount: 94000, date: "10.06.2026 23:31", status: "Onaylandı" },
