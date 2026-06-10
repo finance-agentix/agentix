@@ -1333,6 +1333,8 @@ function login() {
   }
 
   loginError.classList.add("hidden");
+  localStorage.setItem("agentixLoggedIn", "true");
+
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
 
@@ -1505,6 +1507,7 @@ scheduleNextLiveTransaction();
 }
 
 function logout() {
+  localStorage.removeItem("agentixLoggedIn");
   document.getElementById("app").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
 }
@@ -1668,3 +1671,16 @@ function addStaff() {
 }
 
 renderAll();
+
+function checkSavedSession() {
+  const isLoggedIn = localStorage.getItem("agentixLoggedIn") === "true";
+
+  if (isLoggedIn) {
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    setReadonlyMode();
+    renderAll();
+  }
+}
+
+checkSavedSession();
