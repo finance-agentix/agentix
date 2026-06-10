@@ -1709,3 +1709,107 @@ function checkSavedSession() {
 }
 
 checkSavedSession();
+
+/* --- Agentix admin manual transaction fix --- */
+window.createLiveTransaction = function () {
+  try {
+    const names = typeof liveNames !== "undefined" ? liveNames : [
+      "Emirhan Kaya", "Mert Demir", "Caner Yıldız", "Burak Aydın", "Kerem Şahin",
+      "Onur Koç", "Eren Arslan", "Yusuf Çelik", "Furkan Özdemir", "Kaan Aksoy"
+    ];
+
+    const pick = list => list[Math.floor(Math.random() * list.length)];
+
+    const type = Math.random() < 0.58 ? "investment" : "withdrawal";
+
+    let amount;
+
+    const r = Math.random();
+
+    if (r < 0.60) {
+      amount = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000;
+    } else if (r < 0.85) {
+      amount = Math.floor(Math.random() * (25000 - 5000 + 1)) + 5000;
+    } else {
+      amount = Math.floor(Math.random() * (120000 - 25000 + 1)) + 25000;
+    }
+
+    if (Math.random() < 0.30) {
+      const cents = pick([15, 20, 35, 40, 45, 50, 65, 70, 75, 80, 90, 95, 99]);
+      amount = Number(`${amount}.${cents}`);
+    }
+
+    if (typeof liveUserIdCounter === "undefined") {
+      window.liveUserIdCounter = 99000;
+    }
+
+    const now = new Date();
+
+    const date = now.toLocaleDateString("tr-TR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+
+    const time = now.toLocaleTimeString("tr-TR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    const newItem = {
+      userId: `AGX-${window.liveUserIdCounter++}`,
+      name: pick(names),
+      amount,
+      date: `${date} ${time}`,
+      status: "Bekliyor"
+    };
+
+    if (type === "investment") {
+      investments.unshift(newItem);
+    } else {
+      withdrawals.unshift(newItem);
+    }
+
+    if (typeof saveRemoteTransaction === "function") {
+      saveRemoteTransaction(type, newItem);
+    }
+
+    if (typeof createStaffLogForTransaction === "function") {
+      createStaffLogForTransaction(type, "Bekliyor");
+    }
+
+    if (typeof saveRuntimeData === "function") {
+      saveRuntimeData();
+    }
+
+    if (typeof renderAll === "function") {
+      renderAll();
+    }
+
+    const decisionDelay = Math.floor(Math.random() * (60000 - 20000 + 1)) + 20000;
+
+    setTimeout(() => {
+      newItem.status = Math.random() < 0.82 ? "Onaylandı" : "Reddedildi";
+
+      if (typeof updateRemoteTransaction === "function") {
+        updateRemoteTransaction(newItem);
+      }
+
+      if (typeof createStaffLogForTransaction === "function") {
+        createStaffLogForTransaction(type, newItem.status);
+      }
+
+      if (typeof saveRuntimeData === "function") {
+        saveRuntimeData();
+      }
+
+      if (typeof renderAll === "function") {
+        renderAll();
+      }
+    }, decisionDelay);
+
+  } catch (error) {
+    console.log("Rastgele işlem oluşturulamadı:", error);
+    alert("İşlem düşürülürken bir hata oluştu.");
+  }
+};
