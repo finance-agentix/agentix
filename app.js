@@ -1351,6 +1351,59 @@ const liveNames = [
 
 let liveUserIdCounter = 90000;
 
+const liveStaffNames = ["Burak", "Seda", "Elif", "Ayaz", "Cem", "Mert", "Deniz", "Ece", "Kaan", "Arda"];
+
+function createStaffLogForTransaction(type, status) {
+  const staffName = randomItem(liveStaffNames);
+
+  let action;
+
+  if (type === "investment") {
+    if (status === "Onaylandı") {
+      action = randomItem([
+        "Manuel yatırım ekledi",
+        "Yatırım kaydını doğruladı",
+        "Yatırım dekontunu kontrol etti"
+      ]);
+    } else if (status === "Reddedildi") {
+      action = randomItem([
+        "Yatırım işlemini reddetti",
+        "Hatalı yatırım kaydını kontrol etti"
+      ]);
+    } else {
+      action = randomItem([
+        "Bekleyen yatırımı incelemeye aldı",
+        "Yatırım kaydını kontrol ediyor"
+      ]);
+    }
+  } else {
+    if (status === "Onaylandı") {
+      action = randomItem([
+        "Çekim işlemini onayladı",
+        "Çekim talebini tamamladı",
+        "IBAN durumunu değiştirdi"
+      ]);
+    } else if (status === "Reddedildi") {
+      action = randomItem([
+        "Çekim işlemini reddetti",
+        "IBAN uyuşmazlığı nedeniyle çekimi reddetti"
+      ]);
+    } else {
+      action = randomItem([
+        "Bekleyen çekimi incelemeye aldı",
+        "Çekim talebini kontrol ediyor"
+      ]);
+    }
+  }
+
+  staff.unshift({
+    name: staffName,
+    action,
+    date: nowDateText()
+  });
+}
+
+
 function randomItem(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -1377,17 +1430,12 @@ function randomLiveAmount() {
 }
 
 function randomLiveStatus() {
-  const r = Math.random();
-
-  if (r < 0.80) {
-    return "Onaylandı";
-  }
-
-  if (r < 0.95) {
-    return "Reddedildi";
-  }
-
   return "Bekliyor";
+}
+
+function randomFinalStatus() {
+  // Bekleyen işlem sonradan çoğunlukla onaylanır, bazen reddedilir
+  return Math.random() < 0.82 ? "Onaylandı" : "Reddedildi";
 }
 
 function nowDateText() {
@@ -1415,7 +1463,7 @@ function createLiveTransaction() {
     name: randomItem(liveNames),
     amount: randomLiveAmount(),
     date: nowDateText(),
-    status: randomLiveStatus()
+    status: "Bekliyor"
   };
 
   if (type === "investment") {
@@ -1424,12 +1472,22 @@ function createLiveTransaction() {
     withdrawals.unshift(newItem);
   }
 
+  createStaffLogForTransaction(type, "Bekliyor");
   renderAll();
+
+  // İşlem önce beklemede görünür, sonra 20-60 saniye arasında onay/red alır
+  const decisionDelay = Math.floor(Math.random() * (60000 - 20000 + 1)) + 20000;
+
+  setTimeout(() => {
+    newItem.status = randomFinalStatus();
+    createStaffLogForTransaction(type, newItem.status);
+    renderAll();
+  }, decisionDelay);
 }
 
 function scheduleNextLiveTransaction() {
-  // 15 saniye ile 75 saniye arasında rastgele yeni işlem düşürür
-  const delay = Math.floor(Math.random() * (75000 - 15000 + 1)) + 15000;
+  // 30 saniye ile 60 saniye arasında rastgele yeni işlem düşürür
+  const delay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
 
   setTimeout(() => {
     const appVisible = !document.getElementById("app").classList.contains("hidden");
