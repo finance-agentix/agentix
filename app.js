@@ -1322,6 +1322,30 @@ let staff = [
   { name: "Kaan", action: "IBAN durumunu değiştirdi", date: "08.06.2026 12:17" }
 ];
 
+function saveRuntimeData() {
+  localStorage.setItem("agentixInvestments", JSON.stringify(investments));
+  localStorage.setItem("agentixWithdrawals", JSON.stringify(withdrawals));
+  localStorage.setItem("agentixStaff", JSON.stringify(staff));
+}
+
+function loadRuntimeData() {
+  const savedInvestments = localStorage.getItem("agentixInvestments");
+  const savedWithdrawals = localStorage.getItem("agentixWithdrawals");
+  const savedStaff = localStorage.getItem("agentixStaff");
+
+  if (savedInvestments) {
+    investments = JSON.parse(savedInvestments);
+  }
+
+  if (savedWithdrawals) {
+    withdrawals = JSON.parse(savedWithdrawals);
+  }
+
+  if (savedStaff) {
+    staff = JSON.parse(savedStaff);
+  }
+}
+
 function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -1475,6 +1499,7 @@ function createLiveTransaction() {
   }
 
   createStaffLogForTransaction(type, "Bekliyor");
+  saveRuntimeData();
   renderAll();
 
   // İşlem önce beklemede görünür, sonra 20-60 saniye arasında onay/red alır
@@ -1483,6 +1508,7 @@ function createLiveTransaction() {
   setTimeout(() => {
     newItem.status = randomFinalStatus();
     createStaffLogForTransaction(type, newItem.status);
+    saveRuntimeData();
     renderAll();
   }, decisionDelay);
 }
@@ -1670,6 +1696,7 @@ function addStaff() {
   noPermission();
 }
 
+loadRuntimeData();
 renderAll();
 
 function checkSavedSession() {
@@ -1678,6 +1705,7 @@ function checkSavedSession() {
   if (isLoggedIn) {
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
+    loadRuntimeData();
     setReadonlyMode();
     renderAll();
   }
