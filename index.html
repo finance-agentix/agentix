@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentix Finans Paneli</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="loginPage" class="login-page">
+    <div class="login-card">
+      <div class="logo">A</div>
+      <h1>Agentix</h1>
+      <p>Finans Yönetim Sistemi</p>
+
+      <input id="username" type="text" placeholder="Kullanıcı adı" />
+      <input id="password" type="password" placeholder="Şifre" />
+
+      <button onclick="login()">Giriş Yap</button>
+      <small>Demo proje: Bilgiler kontrol edilmeden panele giriş yapılır.</small>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">A</div>
+        <div>
+          <h2>Agentix</h2>
+          <span>Finans Paneli</span>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" onclick="showPage('dashboard', this)">Ana Panel</button>
+        <button class="nav-btn" onclick="showPage('investments', this)">Yatırımlar</button>
+        <button class="nav-btn" onclick="showPage('withdrawals', this)">Çekimler</button>
+        <button class="nav-btn" onclick="showPage('staff', this)">Personeller</button>
+      </nav>
+
+      <button class="logout" onclick="logout()">Çıkış Yap</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1>Agentix Finans Paneli</h1>
+          <p>Yatırım, çekim ve personel takip sistemi</p>
+        </div>
+        <div class="user-box">
+          <span>Admin</span>
+          <strong>Çevrimiçi</strong>
+        </div>
+      </header>
+
+      <section id="dashboard" class="page active">
+        <div class="cards">
+          <div class="card">
+            <span>Toplam Yatırım</span>
+            <strong id="totalInvestment">₺0</strong>
+          </div>
+          <div class="card">
+            <span>Toplam Çekim</span>
+            <strong id="totalWithdrawal">₺0</strong>
+          </div>
+          <div class="card">
+            <span>Net Bakiye</span>
+            <strong id="netBalance">₺0</strong>
+          </div>
+          <div class="card">
+            <span>Personel Sayısı</span>
+            <strong id="staffCount">0</strong>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Son İşlemler</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>İşlem</th>
+                <th>Kişi</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="recentTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="investments" class="page">
+        <div class="page-title">
+          <h2>Yatırımlar</h2>
+          <p>Müşteri yatırım kayıtlarını buradan takip edebilirsin.</p>
+        </div>
+
+        <div class="form">
+          <input id="invName" placeholder="Müşteri adı" />
+          <input id="invAmount" type="number" placeholder="Tutar" />
+          <select id="invStatus">
+            <option>Onaylandı</option>
+            <option>Bekliyor</option>
+            <option>Reddedildi</option>
+          </select>
+          <button onclick="addInvestment()">Yatırım Ekle</button>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Ad Soyad</th>
+                <th>Tutar</th>
+                <th>Tarih</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="investmentTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="withdrawals" class="page">
+        <div class="page-title">
+          <h2>Çekimler</h2>
+          <p>Para çekim taleplerini listele ve durumlarını görüntüle.</p>
+        </div>
+
+        <div class="form">
+          <input id="wdName" placeholder="Müşteri adı" />
+          <input id="wdAmount" type="number" placeholder="Tutar" />
+          <select id="wdStatus">
+            <option>Bekliyor</option>
+            <option>Onaylandı</option>
+            <option>Reddedildi</option>
+          </select>
+          <button onclick="addWithdrawal()">Çekim Ekle</button>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Ad Soyad</th>
+                <th>Tutar</th>
+                <th>Tarih</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="withdrawalTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="staff" class="page">
+        <div class="page-title">
+          <h2>Personeller</h2>
+          <p>Personel bilgileri, görevleri ve maaş takibi.</p>
+        </div>
+
+        <div class="form">
+          <input id="staffName" placeholder="Personel adı" />
+          <input id="staffRole" placeholder="Görev" />
+          <input id="staffSalary" type="number" placeholder="Maaş" />
+          <select id="staffStatus">
+            <option>Aktif</option>
+            <option>İzinli</option>
+            <option>Pasif</option>
+          </select>
+          <button onclick="addStaff()">Personel Ekle</button>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Ad Soyad</th>
+                <th>Görev</th>
+                <th>Maaş</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="staffTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
