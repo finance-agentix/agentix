@@ -189,29 +189,16 @@
       <section id="staff" class="page">
         <div class="page-title">
           <h2>Personeller</h2>
-          <p>Personel bilgileri, görevleri ve maaş takibi.</p>
-        </div>
-
-        <div class="form admin-only">
-          <input id="staffName" placeholder="Personel adı" />
-          <input id="staffRole" placeholder="Görev" />
-          <input id="staffSalary" type="number" placeholder="Maaş" />
-          <select id="staffStatus">
-            <option>Aktif</option>
-            <option>İzinli</option>
-            <option>Pasif</option>
-          </select>
-          <button onclick="addStaff()">Personel Ekle</button>
+          <p>Personel işlem geçmişi ve son aktiviteler.</p>
         </div>
 
         <div class="panel">
           <table>
             <thead>
               <tr>
-                <th>Ad Soyad</th>
-                <th>Görev</th>
-                <th>Maaş</th>
-                <th>Durum</th>
+                <th>Personel</th>
+                <th>Eylem</th>
+                <th>Tarih / Saat</th>
               </tr>
             </thead>
             <tbody id="staffTable"></tbody>
