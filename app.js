@@ -1,3 +1,12 @@
+const AGENTIX_DATA_VERSION = "firebase-only-v1";
+
+if (localStorage.getItem("agentixDataVersion") !== AGENTIX_DATA_VERSION) {
+  localStorage.removeItem("agentixInvestments");
+  localStorage.removeItem("agentixWithdrawals");
+  localStorage.removeItem("agentixStaff");
+  localStorage.setItem("agentixDataVersion", AGENTIX_DATA_VERSION);
+}
+
 const AGENTIX_DISABLE_BROWSER_GENERATOR = true;
 const AGENTIX_APP_VERSION = "2026-06-11-login-fix-2";
 
@@ -1336,27 +1345,23 @@ let staff = [
 ];
 
 function saveRuntimeData() {
-  localStorage.setItem("agentixInvestments", JSON.stringify(investments));
-  localStorage.setItem("agentixWithdrawals", JSON.stringify(withdrawals));
   localStorage.setItem("agentixStaff", JSON.stringify(staff));
 }
 
 function loadRuntimeData() {
-  const savedInvestments = localStorage.getItem("agentixInvestments");
-  const savedWithdrawals = localStorage.getItem("agentixWithdrawals");
   const savedStaff = localStorage.getItem("agentixStaff");
 
-  if (savedInvestments) {
-    investments = JSON.parse(savedInvestments);
-  }
-
-  if (savedWithdrawals) {
-    withdrawals = JSON.parse(savedWithdrawals);
-  }
-
   if (savedStaff) {
-    staff = JSON.parse(savedStaff);
+    try {
+      staff = JSON.parse(savedStaff);
+    } catch (error) {
+      localStorage.removeItem("agentixStaff");
+    }
   }
+
+  // Yatırım ve çekimler Firebase'den ortak olarak alınır.
+  localStorage.removeItem("agentixInvestments");
+  localStorage.removeItem("agentixWithdrawals");
 }
 
 function login() {
