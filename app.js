@@ -1,3 +1,4 @@
+const AGENTIX_DISABLE_BROWSER_GENERATOR = true;
 const AGENTIX_APP_VERSION = "2026-06-11-login-fix-2";
 
 if (localStorage.getItem("agentixAppVersion") !== AGENTIX_APP_VERSION) {
@@ -1479,6 +1480,7 @@ function createLiveTransaction() {
 }
 
 function scheduleNextLiveTransaction() {
+  if (AGENTIX_DISABLE_BROWSER_GENERATOR) return;
   // 30 saniye ile 60 saniye arasında rastgele yeni işlem düşürür
   const delay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
 
@@ -1812,4 +1814,10 @@ window.createLiveTransaction = function () {
     console.log("Rastgele işlem oluşturulamadı:", error);
     alert("İşlem düşürülürken bir hata oluştu.");
   }
+};
+
+
+/* İşlemler yalnızca Firebase arka plan servisi tarafından üretilir. */
+window.createLiveTransaction = function () {
+  return false;
 };
