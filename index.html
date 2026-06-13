@@ -103,15 +103,13 @@
 
         <div class="filter-bar">
           <label>Gün seç:</label>
-          <select id="investmentDayFilter" onchange="renderInvestments()">
-            <option value="all">Tüm Günler</option>
-            <option value="11.06.2026">11.06.2026</option>
-            <option value="10.06.2026">10.06.2026</option>
-            <option value="09.06.2026">09.06.2026</option>
-            <option value="08.06.2026">08.06.2026</option>
-            <option value="07.06.2026">07.06.2026</option>
-            <option value="06.06.2026">06.06.2026</option>
-          </select>
+          <input
+            id="investmentDayFilter"
+            type="date"
+            min="2026-01-01"
+            max="2026-12-31"
+            onchange="renderInvestments()"
+          />
         </div>
 
         <div class="form admin-only">
@@ -149,15 +147,13 @@
 
         <div class="filter-bar">
           <label>Gün seç:</label>
-          <select id="withdrawalDayFilter" onchange="renderWithdrawals()">
-            <option value="all">Tüm Günler</option>
-            <option value="11.06.2026">11.06.2026</option>
-            <option value="10.06.2026">10.06.2026</option>
-            <option value="09.06.2026">09.06.2026</option>
-            <option value="08.06.2026">08.06.2026</option>
-            <option value="07.06.2026">07.06.2026</option>
-            <option value="06.06.2026">06.06.2026</option>
-          </select>
+          <input
+            id="withdrawalDayFilter"
+            type="date"
+            min="2026-01-01"
+            max="2026-12-31"
+            onchange="renderWithdrawals()"
+          />
         </div>
 
         <div class="form admin-only">

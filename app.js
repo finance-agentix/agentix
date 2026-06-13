@@ -1565,6 +1565,13 @@ function getDayFromDate(dateText) {
   return dateText.split(" ")[0];
 }
 
+function convertDateFilter(value) {
+  if (!value) return "all";
+
+  const [year, month, day] = value.split("-");
+  return `${day}.${month}.${year}`;
+}
+
 function noPermission() {
   alert("Bu işlemi yapmak için yetkiniz yok.");
 }
@@ -1585,7 +1592,8 @@ function statusBadge(status) {
 
 function renderInvestments() {
   const table = document.getElementById("investmentTable");
-  const selectedDay = document.getElementById("investmentDayFilter")?.value || "all";
+  const rawSelectedDay = document.getElementById("investmentDayFilter")?.value || "";
+  const selectedDay = convertDateFilter(rawSelectedDay);
 
   const filtered = selectedDay === "all"
     ? investments
@@ -1604,7 +1612,8 @@ function renderInvestments() {
 
 function renderWithdrawals() {
   const table = document.getElementById("withdrawalTable");
-  const selectedDay = document.getElementById("withdrawalDayFilter")?.value || "all";
+  const rawSelectedDay = document.getElementById("withdrawalDayFilter")?.value || "";
+  const selectedDay = convertDateFilter(rawSelectedDay);
 
   const filtered = selectedDay === "all"
     ? withdrawals
